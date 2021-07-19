@@ -1,0 +1,40 @@
+cmake_minimum_required(VERSION 3.6.0)
+project(CppChat VERSION 0.1.0 LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 20)
+
+set(EXECUTABLE_NAME CppChat)
+
+set(CXX_FLAGS 
+	-g -std=c++20
+    -Wall -pedantic -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-include-dirs -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow
+	-Wsign-conversion -Wsign-compare -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef -Wno-unused
+	-D_GLIBCXX_DEBUG)
+
+set(CMAKE_CXX_COMPILER "g++")
+set(CMAKE_CXX_FLAGS_DEBUG "-O0")
+set(CMAKE_CXX_FLAGS_RELEASE "-O2")
+
+#profiles
+include_directories(${PROJECT_SOURCE_DIR}/src/profiles)
+file(GLOB PROFILES ${PROJECT_SOURCE_DIR}/src/profiles/*.cpp)
+
+add_executable(${EXECUTABLE_NAME} src/main.cpp ${PROFILES} ${PROTO_SRCS} ${PROTO_HDRS})
+
+## LIBS
+
+#protobuf
+find_package(Protobuf REQUIRED PATHS ${PROJECT_SOURCE_DIR}/lib/protobuf)
+include_directories(${Protobuf_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+file(GLOB SRC_PROTOS ${PROJECT_SOURCE_DIR}/src/protos/*.proto)
+PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_HDRS ${SRC_PROTOS})
+target_link_libraries(${EXECUTABLE_NAME} ${Protobuf_LIBRARIES}) 
+
+#sfml
+find_package(SFML 2.5 REQUIRED system window graphics audio PATHS ${PROJECT_SOURCE_DIR}/lib/sfml)
+include_directories(${PROJECT_SOURCE_DIR}/lib/SFML/include)
+include_directories(${PROJECT_SOURCE_DIR}/lib/SFML/bin)
+
+MESSAGE("SFML LIB" ${SFML_LIBRARIES})
+MESSAGE("SFML depend" ${SFML_DEPENDENCIES})
+target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES} ${SFML_DEPENDENCIES})
