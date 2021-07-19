@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+message address
+{
+	string Name = 1;
+	int32 House = 2;
+}
