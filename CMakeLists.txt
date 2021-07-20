@@ -13,8 +13,14 @@ set(CXX_FLAGS
 #profiles
 include_directories(${PROJECT_SOURCE_DIR}/src/profiles)
 file(GLOB PROFILES ${PROJECT_SOURCE_DIR}/src/profiles/*.cpp)
+file(GLOB PROFILES_H ${PROJECT_SOURCE_DIR}/src/profiles/*.h)
 
-add_executable(${EXECUTABLE_NAME} WIN32 src/main.cpp ${PROFILES} ${PROTO_SRCS} ${PROTO_HDRS})
+if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+	set(SUBSYSTEM "WIN32")
+	add_definitions ( -DRELEASE=1 )
+endif (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+
+add_executable(${EXECUTABLE_NAME} ${SUBSYSTEM} src/main.cpp ${PROFILES} ${PROFILES_H} ${PROTO_SRCS} ${PROTO_HDRS})
 
 ## LIBS
 
@@ -31,7 +37,7 @@ target_link_libraries(${EXECUTABLE_NAME} ${Protobuf_LIBRARIES})
 #sfml
 find_package(SFML 2.5 CONFIG REQUIRED COMPONENTS graphics) 
 include_directories(${PROJECT_SOURCE_DIR}/lib/SFML/include)
-target_link_libraries(${EXECUTABLE_NAME} sfml-graphics sfml-main)
+target_link_libraries(${EXECUTABLE_NAME} sfml-graphics)
 set(GRAPHICS_DLL sfml-graphics-d-2.dll)
 set(SYSTEM_DLL sfml-system-d-2.dll)
 set(WINDOW_DLL sfml-window-d-2.dll)
