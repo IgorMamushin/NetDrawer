@@ -20,7 +20,7 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
 	add_definitions ( -DRELEASE=1 )
 endif (${CMAKE_BUILD_TYPE} STREQUAL "Release")
 
-add_executable(${EXECUTABLE_NAME} ${SUBSYSTEM} src/main.cpp ${PROFILES} ${PROFILES_H} ${PROTO_SRCS} ${PROTO_HDRS})
+add_executable(${EXECUTABLE_NAME} ${SUBSYSTEM} src/main.cpp src/basic.cpp ${PROFILES} ${PROFILES_H} ${PROTO_SRCS} ${PROTO_HDRS})
 
 ## LIBS
 

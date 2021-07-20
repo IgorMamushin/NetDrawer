@@ -1,8 +1,9 @@
 #include <vector>
-#include <iostream>
+#include <memory>
 
 #include "log.h"
 #include "Profile.h"
+#include "Basic.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/System/Vector2.hpp>
 
@@ -13,57 +14,8 @@ const size_t Height = 600;
 
 const string Title = "Net drawer";
 
-struct Line
-{
-	sf::Vertex line[2];
-};
-
-bool isDrawing = false;
-
-vector<Line> lines;
-
-void Logic(sf::RenderWindow& window)
-{
-	if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
-	{
-		auto position = sf::Mouse::getPosition(window);
-		if (!isDrawing)
-		{
-			Line line;
-			line.line[0].position.x = position.x;
-			line.line[0].position.y = position.y;
-			line.line[0].color = sf::Color::Black;
-
-			line.line[1].position.x = position.x;
-			line.line[1].position.y = position.y;
-			line.line[1].color = sf::Color::Black;
-
-			lines.push_back(line);
-			LOG("Add new line");
-			isDrawing = true;
-		}
-		else
-		{
-			lines[lines.size() - 1].line[1].position.x = position.x;
-			lines[lines.size() - 1].line[1].position.y = position.y;
-		}
-	}
-	else
-	{
-		isDrawing = false;
-	}
-
-	window.clear(sf::Color::White);
-
-#ifndef RELEASE
-	for (const auto& item : lines)
-	{
-		window.draw(item.line, 2, sf::Lines);
-		
-	}
-#endif
-	window.display();
-}
+vector<shared_ptr<DrawBase>> basic;
+shared_ptr<DrawBase> drawing; 
 
 int main()
 {
@@ -82,7 +34,35 @@ int main()
 				window.close();
 		}
 
-		Logic(window);
+		if (drawing == nullptr)
+		{
+			LOG("Build line");
+			drawing = make_shared<Line>(window);
+		}
+
+		auto leftButtonEvent = dynamic_pointer_cast<MouseLeftButtonEvent>(drawing);
+
+		if(leftButtonEvent != nullptr)
+		{
+			leftButtonEvent->event(window);
+			basic.push_back(drawing);
+		}
+
+		if(drawing->Drawed)
+		{
+			drawing = nullptr;
+		}
+
+		window.clear(sf::Color::White);
+		for (const auto& item : basic)
+		{
+			item->update();
+		}
+		for (const auto& item : basic)
+		{
+			item->draw();
+		}
+		window.display();
 	}
 
 	return 0;
