@@ -10,15 +10,11 @@ set(CXX_FLAGS
 	-Wsign-conversion -Wsign-compare -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef -Wno-unused
 	-D_GLIBCXX_DEBUG)
 
-set(CMAKE_CXX_COMPILER "g++")
-set(CMAKE_CXX_FLAGS_DEBUG "-O0")
-set(CMAKE_CXX_FLAGS_RELEASE "-O2")
-
 #profiles
 include_directories(${PROJECT_SOURCE_DIR}/src/profiles)
 file(GLOB PROFILES ${PROJECT_SOURCE_DIR}/src/profiles/*.cpp)
 
-add_executable(${EXECUTABLE_NAME} src/main.cpp ${PROFILES} ${PROTO_SRCS} ${PROTO_HDRS})
+add_executable(${EXECUTABLE_NAME} WIN32 src/main.cpp ${PROFILES} ${PROTO_SRCS} ${PROTO_HDRS})
 
 ## LIBS
 
@@ -35,8 +31,18 @@ target_link_libraries(${EXECUTABLE_NAME} ${Protobuf_LIBRARIES})
 #sfml
 find_package(SFML 2.5 CONFIG REQUIRED COMPONENTS graphics) 
 include_directories(${PROJECT_SOURCE_DIR}/lib/SFML/include)
-target_link_libraries(${EXECUTABLE_NAME} sfml-graphics)
-file(COPY ${PROJECT_SOURCE_DIR}/lib/SFML/bin/sfml-graphics-d-2.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-file(COPY ${PROJECT_SOURCE_DIR}/lib/SFML/bin/openal32.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-file(COPY ${PROJECT_SOURCE_DIR}/lib/SFML/bin/sfml-system-d-2.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-file(COPY ${PROJECT_SOURCE_DIR}/lib/SFML/bin/sfml-window-d-2.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+target_link_libraries(${EXECUTABLE_NAME} sfml-graphics sfml-main)
+set(GRAPHICS_DLL sfml-graphics-d-2.dll)
+set(SYSTEM_DLL sfml-system-d-2.dll)
+set(WINDOW_DLL sfml-window-d-2.dll)
+
+if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+	message("Release mode")
+	set(GRAPHICS_DLL sfml-graphics-2.dll)
+	set(SYSTEM_DLL sfml-system-2.dll)
+	set(WINDOW_DLL sfml-window-2.dll)
+endif (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+
+file(COPY ${PROJECT_SOURCE_DIR}/lib/SFML/bin/${GRAPHICS_DLL} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${PROJECT_SOURCE_DIR}/lib/SFML/bin/${SYSTEM_DLL} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${PROJECT_SOURCE_DIR}/lib/SFML/bin/${WINDOW_DLL} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
