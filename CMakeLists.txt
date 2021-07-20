@@ -23,18 +23,20 @@ add_executable(${EXECUTABLE_NAME} src/main.cpp ${PROFILES} ${PROTO_SRCS} ${PROTO
 ## LIBS
 
 #protobuf
-find_package(Protobuf REQUIRED PATHS ${PROJECT_SOURCE_DIR}/lib/protobuf)
+find_package(Protobuf CONFIG REQUIRED)
 include_directories(${Protobuf_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
 file(GLOB SRC_PROTOS ${PROJECT_SOURCE_DIR}/src/protos/*.proto)
 PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_HDRS ${SRC_PROTOS})
+
 target_link_libraries(${EXECUTABLE_NAME} ${Protobuf_LIBRARIES}) 
 
 #sfml
-find_package(SFML 2.5 REQUIRED system window graphics audio PATHS ${PROJECT_SOURCE_DIR}/lib/sfml)
+find_package(SFML 2.5 CONFIG REQUIRED COMPONENTS graphics) 
 include_directories(${PROJECT_SOURCE_DIR}/lib/SFML/include)
-include_directories(${PROJECT_SOURCE_DIR}/lib/SFML/bin)
-
-MESSAGE("SFML LIB" ${SFML_LIBRARIES})
-MESSAGE("SFML depend" ${SFML_DEPENDENCIES})
-target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES} ${SFML_DEPENDENCIES})
+target_link_libraries(${EXECUTABLE_NAME} sfml-graphics)
+file(COPY ${PROJECT_SOURCE_DIR}/lib/SFML/bin/sfml-graphics-d-2.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${PROJECT_SOURCE_DIR}/lib/SFML/bin/openal32.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${PROJECT_SOURCE_DIR}/lib/SFML/bin/sfml-system-d-2.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${PROJECT_SOURCE_DIR}/lib/SFML/bin/sfml-window-d-2.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
