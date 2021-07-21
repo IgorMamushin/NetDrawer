@@ -1,13 +1,19 @@
 #include "Basic.h"
 #include "log.h"
 
+
 bool MouseLeftButtonEvent::mouseDown_;
 
 MouseLeftButtonEvent::~MouseLeftButtonEvent(){
 }
 
-bool MouseLeftButtonEvent::event(sf::RenderWindow& window)
+bool MouseLeftButtonEvent::event(sf::RenderWindow& window, ImGuiIO& io)
 {
+	if(io.WantCaptureMouse)
+	{
+		return false;
+	}
+
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 	{
 		if(!MouseLeftButtonEvent::mouseDown_)
@@ -88,6 +94,12 @@ void Line::draw()
 {
 	sf::Vertex v[2]{ startPosition, endPosition };
 	window_.draw(v, 2, sf::Lines);
+}
+
+void Line::setColor(sf::Color color)
+{
+	startPosition.color = color;
+	endPosition.color = color;
 }
 
 Line::~Line()

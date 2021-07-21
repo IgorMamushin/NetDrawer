@@ -4,12 +4,13 @@
 #include <memory>
 #include <SFML/Graphics.hpp>
 #include <SFML/System/Vector2.hpp>
+#include "imgui.h"
 
 class MouseLeftButtonEvent
 {	
 public:
 	virtual ~MouseLeftButtonEvent();
-	bool event(sf::RenderWindow& window_);
+	bool event(sf::RenderWindow&, ImGuiIO&);
 
 protected:
 	virtual void LeftClick(sf::Vector2i) = 0;
@@ -25,6 +26,8 @@ public:
 
 	DrawBase(sf::RenderWindow& window);
 	virtual ~DrawBase();
+
+	virtual void setColor(sf::Color) = 0;
 
 	virtual void update() = 0;
 
@@ -43,6 +46,8 @@ private:
 public:
 	Line(sf::RenderWindow&);
 	~Line();
+
+	void setColor(sf::Color) override;
 
 	void update() override;
 
