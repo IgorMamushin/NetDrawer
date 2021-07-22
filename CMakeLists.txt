@@ -43,7 +43,7 @@ endif()
 target_link_libraries(${EXECUTABLE_NAME} ${OPENGL_LIBRARIES})
 
 #protobuf
-find_package(Protobuf CONFIG REQUIRED)
+find_package(Protobuf CONFIG REQUIRED PATH ${lib_folder}/protobuf)
 include_directories(${Protobuf_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
